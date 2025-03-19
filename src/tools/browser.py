@@ -7,15 +7,20 @@ from browser_use import AgentHistoryList, Browser, BrowserConfig
 from browser_use import Agent as BrowserAgent
 from src.agents.llm import vl_llm
 from src.tools.decorators import create_logged_tool
-from src.config import CHROME_INSTANCE_PATH
-
+import os
 expected_browser = None
 
-# Use Chrome instance if specified
-if CHROME_INSTANCE_PATH:
-    expected_browser = Browser(
-        config=BrowserConfig(chrome_instance_path=CHROME_INSTANCE_PATH)
-    )
+proxy = None
+if os.environ.get("browser_proxy"):
+    proxy = {
+        "server": os.environ.get("browser_proxy"),
+        "username": os.environ.get("browser_proxy_username"),
+        "password": os.environ.get("browser_proxy_password"),
+    }
+    print("proxy: ",proxy)
+expected_browser = Browser(
+    config=BrowserConfig(headless=True,proxy=proxy),
+)
 
 
 class BrowserUseInput(BaseModel):
